@@ -23,7 +23,7 @@
         $prepare = $connexion->prepare($requete);
         $prepare->execute();
         $resultat = $prepare->fetchAll();
-        print_r([$requete, $resultat]); // debug & vérification
+        print_r([$requete, $resultat]);
 
         //Requête d'insertion
         $requete = "INSERT INTO `recettes` (`recette_titre`, `recette_contenu`, `recette_datetime`)
@@ -34,9 +34,9 @@
           ":recette_contenu" => "Tu prend une pizza et tu met 734g de mayo dessus",
           ":recette_datetime" => date("Y-m-d h:i:s"),
         ));
-        $resultat = $prepare->rowCount(); // rowCount() nécessite PDO::MYSQL_ATTR_FOUND_ROWS => true
-        $lastInsertedRecipeId = $connexion->lastInsertId(); // on récupère l'id automatiquement créé par SQL
-        print_r([$requete, $resultat, $lastInsertedRecipeId]); // debug & vérification
+        $resultat = $prepare->rowCount();
+        $lastInsertedRecipeId = $connexion->lastInsertId();
+        print_r([$requete, $resultat, $lastInsertedRecipeId]);
 
         // Requête de modification
         $requete = "UPDATE `recettes`
@@ -48,15 +48,15 @@
           ":recette_titre" => "😱 Pizza Mayo"
         ));
         $resultat = $prepare->rowCount();
-        print_r([$requete, $resultat]); // debug & vérification
+        print_r([$requete, $resultat]);
 
         // Requête de suppression
         $requete = "DELETE FROM `recettes`
                     WHERE ((`recette_id` = :recette_id));";
         $prepare = $connexion->prepare($requete);
-        $prepare->execute(array($lastInsertedRecipeId)); // on lui passe l'id tout juste créé
+        $prepare->execute(array($lastInsertedRecipeId));
         $resultat = $prepare->rowCount();
-        print_r([$requete, $resultat, $lastInsertedRecipeId]); // debug & vérification
+        print_r([$requete, $resultat, $lastInsertedRecipeId]);
 
         //Requête d'insertion du levain dans la table hashtag
         // $requete = "INSERT INTO `hashtags` (`hashtag_nom`)
@@ -64,8 +64,8 @@
         // $prepare = $connexion->prepare($requete);
         // $prepare->execute(array(
         //   ":hashtag_nom" => "levain"));
-        // $resultat = $prepare->rowCount(); // rowCount() nécessite PDO::MYSQL_ATTR_FOUND_ROWS => true
-        // print_r([$requete, $resultat]); // debug & vérification
+        // $resultat = $prepare->rowCount();
+        // print_r([$requete, $resultat]);
 
         //Requête qui lie le hashtag "levain" à la recette du "pain au levain"
         // $requete = "INSERT INTO `assoc_hashtags_recettes` (`assoc_hr_hashtag_id`, `assoc_hr_recette_id`)
@@ -75,8 +75,8 @@
         //   ":assoc_hr_hashtag_id" => 4,
         //   ":assoc_hr_recette_id" => 1,
         // ));
-        // $resultat = $prepare->rowCount(); // rowCount() nécessite PDO::MYSQL_ATTR_FOUND_ROWS => true
-        // print_r([$requete, $resultat]); // debug & vérification
+        // $resultat = $prepare->rowCount();
+        // print_r([$requete, $resultat]);
 
         //Pour aller plus loin
         $requete = "SELECT `recette_titre` FROM `recettes`
@@ -88,17 +88,6 @@
           ));
         $resultat = $prepare->fetchAll();
         print_r([$requete, $resultat]);
-
-        // Requête de sélection pour afficher le titre des recettes en visant le hashtag 'nourriture'
-        $requete = "SELECT recette_titre -- L'élément qu'on souhaite pull
-        FROM assoc_hashtags_recettes -- on le pull depuis la table associative grâce aux deux lignes du dessous
-        JOIN recettes on recettes.recette_id = assoc_hashtags_recettes.assoc_hr_recette_id -- JOIN pour créer la liaison dans la requête entre la table 'recettes' et la table assoc
-        JOIN hashtags on hashtags.hashtag_id = assoc_hashtags_recettes.assoc_hr_hashtag_id -- JOIN pour créer la liaison dans la requête entre la table 'hashtags' et la table assoc
-        WHERE hashtags.hashtag_nom = 'nourriture' "; // ici on spécifie qu'on ne veut pull que les entrées recette_titre associées au hashtag 'nourriture'
-        $prepare = $connexion->prepare($requete);
-        $prepare->execute();
-        $resultat = $prepare->fetchAll();
-        print_r([$requete, $resultat]); // debug & vérification
 
       } catch (PDOException $e) {
 
